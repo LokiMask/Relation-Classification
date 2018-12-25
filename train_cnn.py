@@ -4,7 +4,7 @@ import sys
 import tensorflow as tf
 import numpy as np
 from reader import base as base_reader
-from models import cnn_model
+from models import multi_cnn_model as cnn_model
 
 # tf.set_random_seed(0)
 # np.random.seed(0)

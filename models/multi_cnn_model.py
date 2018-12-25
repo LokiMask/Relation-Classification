@@ -54,7 +54,7 @@ def multi_cnn_forward(name, sent_pos, lexical, num_filters):
 		return feature
 
 
-class CNNModel(BaseModel):
+class MultiCNNModel(BaseModel):
 
 	def __init__(self, word_embed, data, word_dim,
 				 pos_num, pos_dim, num_relations,
@@ -127,13 +127,13 @@ def build_train_valid_model(word_embed, train_data, test_data):
 	'''Relation Classification via Convolutional Deep Neural Network'''
 	with tf.name_scope("Train"):
 		with tf.variable_scope('CNNModel', reuse=None):
-			m_train = CNNModel(word_embed, train_data, FLAGS.word_dim,
+			m_train = MultiCNNModel(word_embed, train_data, FLAGS.word_dim,
 							   FLAGS.pos_num, FLAGS.pos_dim, FLAGS.num_relations,
 							   FLAGS.keep_prob, FLAGS.num_filters,
 							   FLAGS.lrn_rate, is_train=True)
 	with tf.name_scope('Valid'):
 		with tf.variable_scope('CNNModel', reuse=True):
-			m_valid = CNNModel(word_embed, test_data, FLAGS.word_dim,
+			m_valid = MultiCNNModel(word_embed, test_data, FLAGS.word_dim,
 							   FLAGS.pos_num, FLAGS.pos_dim, FLAGS.num_relations,
 							   1.0, FLAGS.num_filters,
 							   FLAGS.lrn_rate, is_train=False)
