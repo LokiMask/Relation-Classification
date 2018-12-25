@@ -60,9 +60,8 @@ flags.DEFINE_integer("num_filters1", 75, "cnn number of output unit")
 flags.DEFINE_integer("num_filters2", 100, "rnn number of output unit")
 
 flags.DEFINE_integer("layer_size", 2, "number of rnn layer")
-flags.DEFINE_string("filter_size", "2,3,4", "conv size")
-flags.DEFINE_integer("attention_size", 100, "attention_size")
-flags.DEFINE_float("lrn_rate", 1e-3, "learning rate")
+flags.DEFINE_string("filter_size", "3,4", "conv size")
+flags.DEFINE_float("lrn_rate", 1e-4, "learning rate")
 flags.DEFINE_float("keep_prob", 0.5, "dropout keep probability")
 flags.DEFINE_float("keep_prob_rnn", 0.25, "rnn dropout keep probability")
 
@@ -153,7 +152,6 @@ def main(_):
 						   tf.local_variables_initializer())  # for file queue
 
 		config = tf.ConfigProto()
-		# config.gpu_options.per_process_gpu_memory_fraction = 0.9 # 占用GPU90%的显存
 		config.gpu_options.allow_growth = True
 
 		# sv finalize the graph

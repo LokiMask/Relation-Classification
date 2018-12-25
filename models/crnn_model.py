@@ -1,6 +1,5 @@
 import tensorflow as tf
 from models.base_model import BaseModel
-import pdb
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -53,7 +52,9 @@ def crnn_forward(name, sent_pos, filter_size_list, num_filters1, num_filters2, l
 		lstm_bw_cell = tf.nn.rnn_cell.DropoutWrapper(tf.contrib.rnn.MultiRNNCell(
 			[tf.contrib.rnn.LSTMCell(num_units=num_filters2) for _ in range(layer_size)]), keep_prob_rnn)
 		outputs, _, _ = tf.contrib.rnn.static_bidirectional_rnn(lstm_fw_cell, lstm_bw_cell, inputs, dtype=tf.float32)
-	return outputs[-1]
+
+	feature = tf.concat(outputs, 1)
+	return feature
 
 
 class CRNNModel(BaseModel):
@@ -61,8 +62,7 @@ class CRNNModel(BaseModel):
 	def __init__(self, word_embed, data, word_dim,
 				 pos_num, pos_dim, num_relations,
 				 keep_prob, filter_size, num_filters1,
-				 num_filters2, layer_size, attention_size,
-				 keep_prob_rnn, lrn_rate, is_train):
+				 num_filters2, layer_size, keep_prob_rnn, lrn_rate, is_train):
 		# input data
 		lexical, rid, sentence, pos1, pos2 = data
 
@@ -133,13 +133,11 @@ def build_train_valid_model(word_embed, train_data, test_data):
 			m_train = CRNNModel(word_embed, train_data, FLAGS.word_dim,
 								FLAGS.pos_num, FLAGS.pos_dim, FLAGS.num_relations,
 								FLAGS.keep_prob, FLAGS.filter_size, FLAGS.num_filters1,
-								FLAGS.num_filters2, FLAGS.layer_size, FLAGS.attention_size,
-								FLAGS.keep_prob_rnn, FLAGS.lrn_rate, is_train=True)
+								FLAGS.num_filters2, FLAGS.layer_size, FLAGS.keep_prob_rnn, FLAGS.lrn_rate, is_train=True)
 	with tf.name_scope('Valid'):
 		with tf.variable_scope('CRNNModel', reuse=True):
 			m_valid = CRNNModel(word_embed, test_data, FLAGS.word_dim,
 								FLAGS.pos_num, FLAGS.pos_dim, FLAGS.num_relations,
 								1.0, FLAGS.filter_size, FLAGS.num_filters1,
-								FLAGS.num_filters2, FLAGS.layer_size, FLAGS.attention_size,
-								1.0, FLAGS.lrn_rate, is_train=False)
+								FLAGS.num_filters2, FLAGS.layer_size, 1.0, FLAGS.lrn_rate, is_train=False)
 	return m_train, m_valid
