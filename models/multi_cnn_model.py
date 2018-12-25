@@ -7,7 +7,6 @@
 """
 import tensorflow as tf
 from models.base_model import BaseModel
-import pdb
 FLAGS = tf.app.flags.FLAGS
 
 
@@ -29,6 +28,7 @@ def multi_cnn_forward(name, sent_pos, lexical, num_filters):
 		input = tf.expand_dims(sent_pos, axis=-1)
 		input_dim = input.shape.as_list()[2]
 		pool_outputs = []
+		n=FLAGS.max_len
 		for filter_size in [2, 3, 4, 5]:
 			with tf.variable_scope('conv-%s' % filter_size):
 				conv_weight = tf.get_variable('W1',
@@ -41,9 +41,8 @@ def multi_cnn_forward(name, sent_pos, lexical, num_filters):
 									strides=[1, 1, 1, 1],
 									padding='VALID')
 				conv = tf.nn.relu(conv + conv_bias)
-				conv_len = conv.shape.as_list()[1]
-				pdb.set_trace()
-				pool = tf.nn.max_pool(conv,ksize=[1,conv_len,1,1],strides=[1,1,1,1],padding='VALID')
+				conv_len = n - filter_size + 1
+				pool = tf.nn.max_pool(conv,ksize=[1,n - filter_size + 1,1,1],strides=[1,1,1,1],padding='VALID')
 				pool_outputs.append(pool)
 		pools = tf.reshape(tf.concat(pool_outputs, 3), [-1, 4 * num_filters])
 

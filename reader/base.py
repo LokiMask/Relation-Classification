@@ -245,6 +245,7 @@ def _parse_tfexample(serialized_example):
 	context_features = {
 		'lexical': tf.FixedLenFeature([6], tf.int64),
 		'rid': tf.FixedLenFeature([], tf.int64)}
+	n = FLAGS.max_len
 	sequence_features = {
 		'sentence': tf.FixedLenSequenceFeature([], tf.int64),
 		'position1': tf.FixedLenSequenceFeature([], tf.int64),
@@ -260,7 +261,6 @@ def _parse_tfexample(serialized_example):
 
 	lexical = context_dict['lexical']
 	rid = context_dict['rid']
-
 	return lexical, rid, sentence, position1, position2
 
 
@@ -278,14 +278,12 @@ def read_tfrecord_to_batch(filename, epoch, batch_size, pad_value, shuffle=True)
 		if shuffle:
 			dataset = dataset.shuffle(buffer_size=100)
 
-		# [] for no padding, [None] for padding to maximum length
-		n = FLAGS.max_len
-		padded_shapes = ([None, ], [], [n], [n], [n])
-		
-		pad_value = tf.convert_to_tensor(pad_value)
-		dataset = dataset.padded_batch(batch_size, padded_shapes,
-		                               padding_values=pad_value)
-		#dataset = dataset.batch(batch_size)
+		# # [] for no padding, [None] for padding to maximum length
+		# n = FLAGS.max_len
+		#
+		# pad_value = tf.convert_to_tensor(pad_value)
+		# dataset = dataset.padded_batch(batch_size, padded_shapes=([None, ], [], [n,], [n,], [n,]), padding_values= pad_value)
+		dataset = dataset.batch(batch_size)
 
 		iterator = dataset.make_one_shot_iterator()
 		batch = iterator.get_next()
