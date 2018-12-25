@@ -280,11 +280,8 @@ def read_tfrecord_to_batch(filename, epoch, batch_size, pad_value, shuffle=True)
 
 		# [] for no padding, [None] for padding to maximum length
 		n = FLAGS.max_len
-		if FLAGS.model == 'mtl':
-			padded_shapes = ([None, ], [], [], [n], [n], [n])
-		else:
-			# lexical, rid, sentence, position1, position2
-			padded_shapes = ([None, ], [], [n], [n], [n])
+		padded_shapes = ([None, ], [], [n], [n], [n])
+		
 		pad_value = tf.convert_to_tensor(pad_value)
 		dataset = dataset.padded_batch(batch_size, padded_shapes,
 		                               padding_values=pad_value)
