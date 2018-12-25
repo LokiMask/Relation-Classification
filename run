@@ -1,0 +1,8 @@
+#! /bin/bash
+
+mkdir -p saved_models
+
+/Users/songrui/anaconda3/envs/gluon/bin/python train_cnn.py --test
+# src/scorer.pl data/results.txt data/test_keys.txt 
+
+
