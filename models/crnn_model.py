@@ -45,7 +45,8 @@ def crnn_forward(name, sent_pos, filter_size_list, num_filters1, num_filters2, l
 	pool = tf.squeeze(pool, axis=2)
 	max_len = FLAGS.max_len
 	inputs = tf.unstack(pool, num=max_len, axis=1)
-
+	import pdb
+	pdb.set_trace()
 	with tf.variable_scope('rnn-%s' % filter_size_len):
 		lstm_fw_cell = tf.nn.rnn_cell.DropoutWrapper(tf.contrib.rnn.MultiRNNCell(
 			[tf.contrib.rnn.LSTMCell(num_units=num_filters2) for _ in range(layer_size)]), keep_prob_rnn)
@@ -57,7 +58,7 @@ def crnn_forward(name, sent_pos, filter_size_list, num_filters1, num_filters2, l
 	return feature
 
 
-class CRNNModel(BaseModel):
+class CRNNEPModel(BaseModel):
 
 	def __init__(self, word_embed, data, word_dim,
 				 pos_num, pos_dim, num_relations,
@@ -130,13 +131,13 @@ class CRNNModel(BaseModel):
 def build_train_valid_model(word_embed, train_data, test_data):
 	with tf.name_scope("Train"):
 		with tf.variable_scope('CRNNModel', reuse=None):
-			m_train = CRNNModel(word_embed, train_data, FLAGS.word_dim,
+			m_train = CRNNEPModel(word_embed, train_data, FLAGS.word_dim,
 								FLAGS.pos_num, FLAGS.pos_dim, FLAGS.num_relations,
 								FLAGS.keep_prob, FLAGS.filter_size, FLAGS.num_filters1,
 								FLAGS.num_filters2, FLAGS.layer_size, FLAGS.keep_prob_rnn, FLAGS.lrn_rate, is_train=True)
 	with tf.name_scope('Valid'):
 		with tf.variable_scope('CRNNModel', reuse=True):
-			m_valid = CRNNModel(word_embed, test_data, FLAGS.word_dim,
+			m_valid = CRNNEPModel(word_embed, test_data, FLAGS.word_dim,
 								FLAGS.pos_num, FLAGS.pos_dim, FLAGS.num_relations,
 								1.0, FLAGS.filter_size, FLAGS.num_filters1,
 								FLAGS.num_filters2, FLAGS.layer_size, 1.0, FLAGS.lrn_rate, is_train=False)
