@@ -4,8 +4,7 @@ import sys
 import tensorflow as tf
 import numpy as np
 from reader import base as base_reader
-from models import crnn_model
-#rom models import crnn_model_att as crnn_model
+from models import crnn_model_att as crnn_model
 # tf.set_random_seed(0)
 # np.random.seed(0)
 
@@ -64,7 +63,7 @@ flags.DEFINE_string("filter_size", "3,4", "conv size")
 flags.DEFINE_float("lrn_rate", 1e-4, "learning rate")
 flags.DEFINE_float("keep_prob", 0.5, "dropout keep probability")
 flags.DEFINE_float("keep_prob_rnn", 0.25, "rnn dropout keep probability")
-
+flags.DEFINE_integer("attention_size", 128, "size of attention matrix")
 flags.DEFINE_boolean('test', False, 'set True to test')
 flags.DEFINE_boolean('trace', False, 'set True to test')
 
@@ -146,7 +145,7 @@ def main(_):
 		m_train, m_valid = crnn_model.build_train_valid_model(word_embed,
 															  train_data, test_data)
 
-		m_train.set_saver('crnn-%d-%d' % (FLAGS.num_epochs, FLAGS.word_dim))
+		m_train.set_saver('crnnatt-%d-%d' % (FLAGS.num_epochs, FLAGS.word_dim))
 
 		init_op = tf.group(tf.global_variables_initializer(),
 						   tf.local_variables_initializer())  # for file queue
